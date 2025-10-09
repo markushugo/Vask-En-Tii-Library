@@ -49,9 +49,9 @@ namespace Vask_En_Tid_Library.Services
         /// <summary>
         /// Gets all bookings.
         /// </summary>
-        public void GetAllBookings()
+        public void GetAll()
         {
-            _bookingRepo.GetAllBookings();
+            _bookingRepo.GetAll();
         }
 
     }
