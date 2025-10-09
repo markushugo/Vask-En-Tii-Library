@@ -40,6 +40,9 @@ namespace Vask_En_Tid_Library.IRepos
 
         public Booking GetById(int bookingId);
 
+        public List<Booking> GetUpcoming();
+
+        public int CountBookings(DateTime bookingDate, TimeSpan bookingTime, string machineType);
 
     }
 }

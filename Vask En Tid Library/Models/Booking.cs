@@ -18,7 +18,7 @@ namespace Vask_En_Tid_Library.Models
         /// <summary>
         /// The booking time
         /// </summary>
-        public DateTime _bookingTime;
+        public TimeSpan _bookingTime;
         /// <summary>
         /// The tenant identifier
         /// </summary>
@@ -49,7 +49,7 @@ namespace Vask_En_Tid_Library.Models
         /// <value>
         /// The booking time.
         /// </value>
-        public DateTime BookingTime { get { return _bookingTime; } set { _bookingTime = value; } }
+        public TimeSpan BookingTime { get { return _bookingTime; } set { _bookingTime = value; } }
 
         /// <summary>
         /// Gets or sets the tenant identifier.
@@ -80,6 +80,8 @@ namespace Vask_En_Tid_Library.Models
         /// </value>
         public bool IsBooked { get { return _isBooked; } set { _isBooked = value; } }
 
+        public string MachineType { get; set; } = "Washer"; 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Booking"/> class.
         /// </summary>
@@ -89,7 +91,7 @@ namespace Vask_En_Tid_Library.Models
         /// <param name="machineId">The machine identifier.</param>
         /// <param name="bookingDate">The booking date.</param>
         /// <param name="isBooked">if set to <c>true</c> [is booked].</param>
-        public Booking(int bookingId, DateTime bookingTime, int tenantId, int machineId, DateTime bookingDate, bool isBooked)
+        public Booking(int bookingId, TimeSpan bookingTime, int tenantId, int machineId, DateTime bookingDate, bool isBooked)
         {
             _bookingId = bookingId;
             _bookingTime = bookingTime;

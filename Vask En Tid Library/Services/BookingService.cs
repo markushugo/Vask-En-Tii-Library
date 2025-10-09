@@ -54,5 +54,19 @@ namespace Vask_En_Tid_Library.Services
             _bookingRepo.GetAll();
         }
 
+        public List<Booking> GetUpcoming()
+        {
+            var allBookings = _bookingRepo.GetAll();
+            var upcomingBookings = allBookings.Where(b => b.BookingDate >= DateTime.Today).ToList();
+            return upcomingBookings;
+
+        }
+
+        public int CountBookings(DateTime bookingDate, TimeSpan bookingTime, string machineType)
+        {
+            return _bookingRepo.CountBookings(bookingDate, bookingTime, machineType);
+
+        }
+
     }
 }
