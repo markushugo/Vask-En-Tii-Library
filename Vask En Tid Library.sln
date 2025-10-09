@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vask En Tid Library", "Vask En Tid Library\Vask En Tid Library.csproj", "{9EB4F3FB-CFCE-4AD1-A1C4-83D8FFFF44E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vask En Tid Library", "Vask En Tid Library\Vask En Tid Library.csproj", "{200A494A-1CDF-4203-837E-20EF772518B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9EB4F3FB-CFCE-4AD1-A1C4-83D8FFFF44E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EB4F3FB-CFCE-4AD1-A1C4-83D8FFFF44E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EB4F3FB-CFCE-4AD1-A1C4-83D8FFFF44E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EB4F3FB-CFCE-4AD1-A1C4-83D8FFFF44E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{200A494A-1CDF-4203-837E-20EF772518B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{200A494A-1CDF-4203-837E-20EF772518B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{200A494A-1CDF-4203-837E-20EF772518B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{200A494A-1CDF-4203-837E-20EF772518B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1056D361-7CD8-4950-9795-C6761F8BCE7F}
+		SolutionGuid = {CAE3E893-F9DF-4148-860A-626D86C8C952}
 	EndGlobalSection
 EndGlobal

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Vask_En_Tid_Library
+namespace Vask_En_Tid_Library.Controller
 {
-    public class Class1
+    public class UnitController
     {
     }
 }
