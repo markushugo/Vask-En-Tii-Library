@@ -36,8 +36,9 @@ namespace Vask_En_Tid_Library.IRepos
         /// <summary>
         /// Gets all bookings.
         /// </summary>
-        public List<Booking> GetAllBookings();
+        public List<Booking> GetAll();
 
+        public Booking GetById(int bookingId);
 
 
     }
