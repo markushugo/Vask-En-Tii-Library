@@ -77,23 +77,67 @@ namespace Vask_En_Tid_Library.Repos
 
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(@"
-                SELECT BookingId, TenantId, MachineId, BookingDate, TimeslotId, IsCancelled
-                FROM Booking
-                ORDER BY BookingDate, TimeslotId;", con);
+        SELECT 
+            b.BookingId,
+            b.TenantId,
+            b.MachineId,
+            b.BookingDate,
+            b.TimeslotId,
+            b.IsCancelled,
+
+            t.FirstName,
+            t.LastName,
+
+            a.ApartmentId,
+            a.FloorNumber,
+            a.ApartmentCode,
+
+            ts.SlotName
+            -- hvis du HAR en Unit/Machine-tabel, kan du også tage den med:
+            -- , u.MachineType
+        FROM Booking b
+        INNER JOIN Tenant t      ON b.TenantId = t.TenantId
+        INNER JOIN Apartment a   ON t.ApartmentId = a.ApartmentId
+        INNER JOIN Timeslot ts   ON b.TimeslotId = ts.TimeslotId
+        -- LEFT JOIN Unit u        ON b.MachineId = u.MachineId   -- kun hvis tabellen findes
+        ORDER BY b.BookingDate, b.TimeslotId;
+    ", con);
 
             con.Open();
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                list.Add(new Booking
+                var booking = new Booking
                 {
-                    BookingId = reader.GetInt32(0),
-                    TenantId = reader.GetInt32(1),
-                    MachineId = reader.GetInt32(2),
-                    BookingDate = reader.GetDateTime(3),
-                    TimeslotId = reader.GetInt32(4),
-                    IsCancelled = reader.GetBoolean(5)
-                });
+                    BookingId = reader.GetInt32(reader.GetOrdinal("BookingId")),
+                    TenantId = reader.GetInt32(reader.GetOrdinal("TenantId")),
+                    MachineId = reader.GetInt32(reader.GetOrdinal("MachineId")),
+                    BookingDate = reader.GetDateTime(reader.GetOrdinal("BookingDate")),
+                    TimeslotId = reader.GetInt32(reader.GetOrdinal("TimeslotId")),
+                    IsCancelled = reader.GetBoolean(reader.GetOrdinal("IsCancelled")),
+
+                    Tenant = new Tenant
+                    {
+                        TenantID = reader.GetInt32(reader.GetOrdinal("TenantId")),
+                        FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                        LastName = reader.GetString(reader.GetOrdinal("LastName"))
+                    },
+                    Apartment = new Apartment
+                    {
+                        ApartmentId = reader.GetInt32(reader.GetOrdinal("ApartmentId")),
+                        // din kolonne hedder FloorNumber i databasen
+                        Number = reader.GetInt32(reader.GetOrdinal("FloorNumber")),
+                        ApartmentCode = reader.GetString(reader.GetOrdinal("ApartmentCode"))
+                    },
+                    Timeslot = new Timeslot
+                    {
+                        TimeslotId = reader.GetInt32(reader.GetOrdinal("TimeslotId")),
+                        SlotName = reader.GetString(reader.GetOrdinal("SlotName"))
+                    }
+                    // Machine = ... hvis du joiner til Unit/Machine
+                };
+
+                list.Add(booking);
             }
 
             return list;
@@ -193,6 +237,30 @@ namespace Vask_En_Tid_Library.Repos
             con.Open();
             var count = (int)cmd.ExecuteScalar();
             return count > 0;
+        }
+        public List<int> GetBookedMachineIds(DateTime bookingDate, int timeslotId)
+        {
+            var list = new List<int>();
+
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(@"
+        SELECT MachineId
+        FROM Booking
+        WHERE BookingDate = @date
+          AND TimeslotId = @slot
+          AND IsCancelled = 0;", con);
+
+            cmd.Parameters.AddWithValue("@date", bookingDate.Date);
+            cmd.Parameters.AddWithValue("@slot", timeslotId);
+
+            con.Open();
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(reader.GetInt32(0));
+            }
+
+            return list;
         }
     }
 }

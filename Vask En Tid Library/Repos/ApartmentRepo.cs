@@ -86,6 +86,7 @@ namespace Vask_En_Tid_Library.Repos
                     ApartmentId = (int)reader["ApartmentId"],
                     Number = (int)reader["FloorNumber"],
                     ApartmentCode = (string)reader["ApartmentCode"]
+
                 };
             }
 

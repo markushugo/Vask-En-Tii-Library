@@ -65,5 +65,9 @@ namespace Vask_En_Tid_Library.Services
         {
             return _bookingRepo.TenantHasBooking(tenantId, bookingDate, timeslotId);
         }
+        public List<int> GetBookedMachineIds(DateTime bookingDate, int timeslotId)
+        {
+            return _bookingRepo.GetBookedMachineIds(bookingDate, timeslotId);
+        }
     }
 }

@@ -18,13 +18,17 @@ namespace Vask_En_Tid_Library.Models
     
         public bool _isAvailable;
 
+        public string _machineName;
 
 
 
-       
+
+
             public int MachineId { get; set; }
             public string MachineType { get; set; }   // "Washer" | "Dryer" | "Roller"
             public bool IsAvailable { get; set; }
+
+            public string MachineName { get; set; }
        
 
         public enum NumberOfMachines 
@@ -34,11 +38,12 @@ namespace Vask_En_Tid_Library.Models
             RollingMachine = 1
 
         }
-        public Unit(int machineId, string machineType, bool isAvailable)
+        public Unit(int machineId, string machineType, bool isAvailable, string machineName)
         {
             _machineId = machineId;
             _machineType = machineType;
             _isAvailable = isAvailable;
+            _machineName = machineName;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="Unit"/> class.

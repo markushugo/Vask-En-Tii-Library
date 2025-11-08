@@ -22,6 +22,7 @@ namespace Vask_En_Tid_Library.IRepos
             // Regler/checks
             bool TenantHasBooking(int tenantId, DateTime bookingDate, int timeslotId);
             bool MachineIsBooked(int machineId, DateTime bookingDate, int timeslotId);
-        }
+            List<int> GetBookedMachineIds(DateTime bookingDate, int timeslotId);
+    }
     }
 

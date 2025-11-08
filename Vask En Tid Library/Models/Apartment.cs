@@ -23,7 +23,7 @@ namespace Vask_En_Tid_Library.Models
         /// <summary>
         /// The apartment adrees
         /// </summary>
-        public int _apartmentCode;
+        public string _apartmentCode;
 
 
         /// <summary>
@@ -46,14 +46,15 @@ namespace Vask_En_Tid_Library.Models
         /// <value>
         /// The apartment adrees.
         /// </value>
-        public string ApartmentCode { get; set; }
+     
+        public string ApartmentCode { get { return _apartmentCode; } set { _apartmentCode = value; } }
         /// <summary>
         /// Initializes a new instance of the <see cref="Apartment"/> class.
         /// </summary>
         /// <param name="apartmentId">The apartment identifier.</param>
         /// <param name="number">The number.</param>
         /// <param name="apartmentAdrees">The apartment adrees.</param>
-        public Apartment(int apartmentId, int number, int apartmentCode)
+        public Apartment(int apartmentId, int number, string apartmentCode)
         {
             _apartmentId = apartmentId;
             _number = number;

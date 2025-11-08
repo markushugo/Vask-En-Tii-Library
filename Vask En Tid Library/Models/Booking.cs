@@ -16,7 +16,7 @@ namespace Vask_En_Tid_Library.Models
         SixToEight = 6
     }
 
-    // hvis du også vil have enum i koden til maskintyper (selvom DB bruger MachineId)
+
     public enum MachineTypeEnum
     {
         Washer = 1,
@@ -26,37 +26,43 @@ namespace Vask_En_Tid_Library.Models
 
     public class Booking
     {
-        // PK i DB
+
         public int BookingId { get; set; }
 
-        // FK → Tenant
         public int TenantId { get; set; }
-
-        // FK → Machine (den konkrete maskine, ikke bare “Washer”)
         public int MachineId { get; set; }
-
-        // datoen der bookes
         public DateTime BookingDate { get; set; }
-
-        // FK → Timeslot (den vi lavede i SQL)
         public int TimeslotId { get; set; }
-
-        // om den er aflyst
         public bool IsCancelled { get; set; }
 
-        // 👇 Hjælpeproperty: gør det nemmere i C#
-        // så du kan skrive booking.Timeslot == TimeslotEnum.EightToTen
-        public TimeslotEnum Timeslot
+
+        public Tenant? Tenant { get; set; }
+        public Apartment? Apartment { get; set; }
+        public Timeslot? Timeslot { get; set; }
+        public Unit? Machine { get; set; }
+
+        public List<Unit> Units { get; set; } = new List<Unit>();
+
+        public TimeslotEnum TimeslotEnum
         {
             get => (TimeslotEnum)TimeslotId;
             set => TimeslotId = (int)value;
         }
 
-        // valgfri: hvis du i UI vil vise typen (Washer/Dryer/Roller),
-        // men det er ikke noget vi gemmer på Booking-tabellen mere
+
         public MachineTypeEnum? MachineType { get; set; }
 
-        public Booking() { }
+        public string MachineName =>
+        MachineId switch
+    {
+        1 or 2 or 3 => "Washer",
+        4 or 5 => "Dryer",
+        6 => "Roller",
+        _ => "Ukendt"
+    };
+        public Booking()
+        {
+        }
     }
 }
 
