@@ -13,8 +13,8 @@ namespace Vask_En_Tid_Library.Repos
 {
     public class TenantRepo : ITenantRepo
     {
+        private readonly string _connectionString;
 
-        private string _connectionString = "Default";
         public TenantRepo(string connectionString)
         {
             _connectionString = connectionString;
@@ -23,48 +23,49 @@ namespace Vask_En_Tid_Library.Repos
         public List<Tenant> GetAll()
         {
             var tenants = new List<Tenant>();
-            using (var connection = new SqlConnection(_connectionString))
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand(
+                "SELECT TenantId, FirstName, LastName, ApartmentId FROM Tenant",
+                connection);
+
+            connection.Open();
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                var command = new SqlCommand("SELECT TenantId, Firstname, LastName FROM Tenant", connection);
-                connection.Open();
-                using (var reader = command.ExecuteReader())
+                tenants.Add(new Tenant
                 {
-                    while (reader.Read())
-                    {
-                        var tenant = new Tenant
-                        {
-                            TenantID = (int)reader["TenantId"],
-                            FirstName = (string)reader["FirstName"],
-                            LastName = (string)reader["LastName"]
-                        };
-                        tenants.Add(tenant);
-                    }
-                }
+                    TenantID = (int)reader["TenantId"],
+                    FirstName = (string)reader["FirstName"],
+                    LastName = (string)reader["LastName"],
+                    ApartmentId = (int)reader["ApartmentId"]   // <- tilføj feltet i din model
+                });
             }
+
             return tenants;
         }
 
         public Tenant GetById(int tenantId)
         {
             Tenant tenant = null;
-            using (var connection = new SqlConnection(_connectionString))
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand(
+                "SELECT TenantId, FirstName, LastName, ApartmentId FROM Tenant WHERE TenantId = @TenantId",
+                connection);
+
+            command.Parameters.AddWithValue("@TenantId", tenantId);
+            connection.Open();
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
             {
-                var command = new SqlCommand("SELECT TenantId, FirstName, LastName FROM Tenant WHERE TenantId = @TenantID", connection);
-                command.Parameters.AddWithValue("@TenantID", tenantId);
-                connection.Open();
-                using (var reader = command.ExecuteReader())
+                tenant = new Tenant
                 {
-                    if (reader.Read())
-                    {
-                        tenant = new Tenant
-                        {
-                            TenantID = (int)reader["TenantId"],
-                            FirstName = (string)reader["FirstName"],
-                            LastName = (string)reader["LastName"]
-                        };
-                    }
-                }
+                    TenantID = (int)reader["TenantId"],
+                    FirstName = (string)reader["FirstName"],
+                    LastName = (string)reader["LastName"],
+                    ApartmentId = (int)reader["ApartmentId"]
+                };
             }
+
             return tenant;
         }
 
@@ -72,11 +73,12 @@ namespace Vask_En_Tid_Library.Repos
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(
-
-                "INSERT INTO Tenant (FirstName, LastName) VALUES (@FirstName, @LastName)",
+                "INSERT INTO Tenant (FirstName, LastName, ApartmentId) VALUES (@FirstName, @LastName, @ApartmentId)",
                 connection);
+
             command.Parameters.AddWithValue("@FirstName", tenant.FirstName);
             command.Parameters.AddWithValue("@LastName", tenant.LastName);
+            command.Parameters.AddWithValue("@ApartmentId", tenant.ApartmentId);
 
             connection.Open();
             command.ExecuteNonQuery();
@@ -86,12 +88,13 @@ namespace Vask_En_Tid_Library.Repos
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(
-                "UPDATE Tenant SET FirstName = @FirstName, LastName = @LastName WHERE TenantId = @TenantID",
+                "UPDATE Tenant SET FirstName = @FirstName, LastName = @LastName, ApartmentId = @ApartmentId WHERE TenantId = @TenantId",
                 connection);
 
             command.Parameters.AddWithValue("@FirstName", tenant.FirstName);
             command.Parameters.AddWithValue("@LastName", tenant.LastName);
-            command.Parameters.AddWithValue("@TenantID", tenant.TenantID); 
+            command.Parameters.AddWithValue("@ApartmentId", tenant.ApartmentId);
+            command.Parameters.AddWithValue("@TenantId", tenant.TenantID);
 
             connection.Open();
             command.ExecuteNonQuery();
@@ -101,9 +104,10 @@ namespace Vask_En_Tid_Library.Repos
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(
-                "DELETE FROM Tenant WHERE TenantId = @TenantID", connection);
-            command.Parameters.AddWithValue("@TenantID", tenantId);
+                "DELETE FROM Tenant WHERE TenantId = @TenantId",
+                connection);
 
+            command.Parameters.AddWithValue("@TenantId", tenantId);
             connection.Open();
             command.ExecuteNonQuery();
         }

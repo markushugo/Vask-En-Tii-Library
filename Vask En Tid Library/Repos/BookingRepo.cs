@@ -12,13 +12,7 @@ namespace Vask_En_Tid_Library.Repos
 {
     public class BookingRepo : IBookingRepo
     {
-        private string _connectionString = "Default";
-
-        public List<Booking> _bookings;
-
-        private static readonly Dictionary<string, int> _caps =
-        new(StringComparer.OrdinalIgnoreCase)
-        { ["Washer"] = 3, ["Dryer"] = 2, ["Roller"] = 1 };
+        private readonly string _connectionString;
 
         public BookingRepo(string connectionString)
         {
@@ -27,159 +21,178 @@ namespace Vask_En_Tid_Library.Repos
 
         public void CreateBooking(Booking booking)
         {
-
-            using var connection = new SqlConnection(_connectionString);
-            if (!_caps.TryGetValue(booking.MachineType, out var max))
-                throw new ArgumentException("Ukendt MachineType. Tilladt: Washer, Dryer, Roller.");
-
-            using var con = new SqlConnection(_connectionString);
-            con.Open();
-
-            using var tx = con.BeginTransaction();
-
-            const string countSql = @"
-            SELECT COUNT(*)
-            FROM Booking WITH (UPDLOCK, HOLDLOCK)
-            WHERE BookingDate = @BookingDate
-            AND BookingTime = @BookingTime
-            AND MachineType = @MachineType
-            AND IsBooked = 1;";
-
-            using (var countCmd = new SqlCommand(countSql, con, tx))
-            {
-                countCmd.Parameters.Add("@BookingDate", SqlDbType.Date).Value = booking.BookingDate.Date;
-                countCmd.Parameters.Add("@BookingTime", SqlDbType.Time).Value = booking.BookingTime; // TimeSpan
-                countCmd.Parameters.Add("@MachineType", SqlDbType.NVarChar, 20).Value = booking.MachineType;
-
-                var used = (int)countCmd.ExecuteScalar()!;
-                if (used >= max)
-                {
-                    tx.Rollback();
-                    throw new InvalidOperationException("Ingen ledige maskiner af den type på det tidspunkt.");
-                }
-            }
-
-            const string insertSql = @"
-            INSERT INTO Booking (BookingTime, BookingDate, IsBooked, MachineType)
-            VALUES (@BookingTime, @BookingDate, 1, @MachineType);";
-
-            using (var ins = new SqlCommand(insertSql, con, tx))
-            {
-                ins.Parameters.Add("@BookingTime", SqlDbType.Time).Value = booking.BookingTime;
-                ins.Parameters.Add("@BookingDate", SqlDbType.Date).Value = booking.BookingDate.Date;
-                ins.Parameters.Add("@MachineType", SqlDbType.NVarChar, 20).Value = booking.MachineType;
-                ins.ExecuteNonQuery();
-            }
-
-            tx.Commit();
-
-        }
-        public void DeleteBooking(int bookingId)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand(
-                    "DELETE FROM Booking WHERE BookingId = @Bookingid", connection);
-            command.Parameters.Add("@Bookingid", SqlDbType.Int).Value = bookingId;
-
-            connection.Open();
-            command.ExecuteNonQuery();
-        }
-
-        public int CountBookings(DateTime bookingDate, TimeSpan bookingTime, string machineType)
-        {
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(@"
-            SELECT COUNT(*)
-            FROM Booking
-            WHERE MachineType=@type AND BookingDate=@BookingDate AND BookingTime=@BookingTime AND IsBooked=1;", con);
-            cmd.Parameters.Add("@type", SqlDbType.NVarChar, 20).Value = machineType;
-            cmd.Parameters.Add("@BookingDate", SqlDbType.Date).Value = bookingDate.Date;
-            cmd.Parameters.Add("@BookingTime", SqlDbType.Time).Value = bookingTime;
+                INSERT INTO Booking (TenantId, MachineId, BookingDate, TimeslotId, IsCancelled)
+                VALUES (@tenant, @machine, @date, @slot, 0);", con);
+
+            cmd.Parameters.Add("@tenant", SqlDbType.Int).Value = booking.TenantId;
+            cmd.Parameters.Add("@machine", SqlDbType.Int).Value = booking.MachineId;
+            cmd.Parameters.Add("@date", SqlDbType.Date).Value = booking.BookingDate.Date;
+            cmd.Parameters.Add("@slot", SqlDbType.Int).Value = booking.TimeslotId;
+
             con.Open();
-            return (int)cmd.ExecuteScalar()!;
+            cmd.ExecuteNonQuery();
+        }
+
+        public void DeleteBooking(int bookingId)
+        {
+            // du kan også vælge at sætte IsCancelled = 1 i stedet
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(
+                "DELETE FROM Booking WHERE BookingId = @id;",
+                con);
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = bookingId;
+
+            con.Open();
+            cmd.ExecuteNonQuery();
         }
 
         public void UpdateBooking(Booking booking)
         {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand(
-                "UPDATE Booking SET BookingTime = @BookingTime, BookingDate = @BookingDate, IsBooked = @IsBooked, @MachineType = MachineType WHERE BookingId = @BookingId",
-                connection);
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(@"
+                UPDATE Booking
+                SET TenantId = @tenant,
+                    MachineId = @machine,
+                    BookingDate = @date,
+                    TimeslotId = @slot,
+                    IsCancelled = @cancelled
+                WHERE BookingId = @id;", con);
 
-            command.Parameters.AddWithValue("@BookingTime", booking.BookingTime);
-            command.Parameters.AddWithValue("@BookingDate", booking.BookingDate);
-            command.Parameters.AddWithValue("@IsBooked", booking.BookingId);
-            command.Parameters.AddWithValue("@MachineType", booking.MachineType);
+            cmd.Parameters.Add("@tenant", SqlDbType.Int).Value = booking.TenantId;
+            cmd.Parameters.Add("@machine", SqlDbType.Int).Value = booking.MachineId;
+            cmd.Parameters.Add("@date", SqlDbType.Date).Value = booking.BookingDate.Date;
+            cmd.Parameters.Add("@slot", SqlDbType.Int).Value = booking.TimeslotId;
+            cmd.Parameters.Add("@cancelled", SqlDbType.Bit).Value = booking.IsCancelled;
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = booking.BookingId;
 
-            connection.Open();
-            command.ExecuteNonQuery();
+            con.Open();
+            cmd.ExecuteNonQuery();
         }
 
-        public List<Booking> GetUpcoming()
-        {
-            var bookings = new List<Booking>();
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand(@"
-            SELECT BookingId, BookingTime, BookingDate, MachineType, IsBooked
-            FROM Booking
-            WHERE BookingDate >= CAST(GETDATE() AS date)
-            ORDER BY BookingDate, BookingTime;", connection);
-            connection.Open();
-            using var reader = command.ExecuteReader();
-            while (reader.Read()) {  }
-            return bookings;
-        }
         public List<Booking> GetAll()
         {
-            var bookings = new List<Booking>();
+            var list = new List<Booking>();
 
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(@"
-            SELECT BookingId, BookingTime, BookingDate, MachineType, IsBooked
-            FROM Booking
-            ORDER BY BookingDate, BookingTime, MachineType;", con);
+                SELECT BookingId, TenantId, MachineId, BookingDate, TimeslotId, IsCancelled
+                FROM Booking
+                ORDER BY BookingDate, TimeslotId;", con);
 
             con.Open();
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                bookings.Add(new Booking
+                list.Add(new Booking
                 {
-                    BookingId = reader.GetInt32(reader.GetOrdinal("BookingId")),
-                    BookingTime = reader.GetTimeSpan(reader.GetOrdinal("BookingTime")),
-                    BookingDate = reader.GetDateTime(reader.GetOrdinal("BookingDate")),
-                    MachineType = reader.GetString(reader.GetOrdinal("MachineType")),
-                    IsBooked = reader.GetBoolean(reader.GetOrdinal("IsBooked"))
+                    BookingId = reader.GetInt32(0),
+                    TenantId = reader.GetInt32(1),
+                    MachineId = reader.GetInt32(2),
+                    BookingDate = reader.GetDateTime(3),
+                    TimeslotId = reader.GetInt32(4),
+                    IsCancelled = reader.GetBoolean(5)
                 });
             }
 
-            return bookings;   // <- VIGTIGT: returnér den lokale liste
+            return list;
         }
 
         public Booking GetById(int bookingId)
         {
-            Booking booking = null;
-            using (var connection = new SqlConnection(_connectionString))
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(@"
+                SELECT BookingId, TenantId, MachineId, BookingDate, TimeslotId, IsCancelled
+                FROM Booking
+                WHERE BookingId = @id;", con);
+
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = bookingId;
+
+            con.Open();
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
             {
-                var command = new SqlCommand("SELECT BookingTime, BookingDate, IsBooked, MachineType FROM Booking WHERE BookingId = @BookingId", connection);
-                command.Parameters.AddWithValue("@BookingId", bookingId);
-                connection.Open();
-                using (var reader = command.ExecuteReader())
+                return new Booking
                 {
-                    if (reader.Read())
-                    {
-                        booking = new Booking
-                        {
-                            BookingTime = (TimeSpan)reader["BookingTime"],
-                            BookingDate = (DateTime)reader["BookingDate"],
-                            IsBooked = (bool)reader["IsBooked"],
-                            MachineType = (string)reader["MachineType"]
-                        };
-                    }
-                }
+                    BookingId = reader.GetInt32(0),
+                    TenantId = reader.GetInt32(1),
+                    MachineId = reader.GetInt32(2),
+                    BookingDate = reader.GetDateTime(3),
+                    TimeslotId = reader.GetInt32(4),
+                    IsCancelled = reader.GetBoolean(5)
+                };
             }
-            return booking;
+            return null;
         }
 
+        public List<Booking> GetUpcoming()
+        {
+            var list = new List<Booking>();
+
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(@"
+                SELECT BookingId, TenantId, MachineId, BookingDate, TimeslotId, IsCancelled
+                FROM Booking
+                WHERE BookingDate >= CAST(GETDATE() AS date)
+                ORDER BY BookingDate, TimeslotId;", con);
+
+            con.Open();
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new Booking
+                {
+                    BookingId = reader.GetInt32(0),
+                    TenantId = reader.GetInt32(1),
+                    MachineId = reader.GetInt32(2),
+                    BookingDate = reader.GetDateTime(3),
+                    TimeslotId = reader.GetInt32(4),
+                    IsCancelled = reader.GetBoolean(5)
+                });
+            }
+
+            return list;
+        }
+
+        public bool TenantHasBooking(int tenantId, DateTime bookingDate, int timeslotId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(@"
+                SELECT COUNT(*)
+                FROM Booking
+                WHERE TenantId = @tenant
+                  AND BookingDate = @date
+                  AND TimeslotId = @slot
+                  AND IsCancelled = 0;", con);
+
+            cmd.Parameters.Add("@tenant", SqlDbType.Int).Value = tenantId;
+            cmd.Parameters.Add("@date", SqlDbType.Date).Value = bookingDate.Date;
+            cmd.Parameters.Add("@slot", SqlDbType.Int).Value = timeslotId;
+
+            con.Open();
+            var count = (int)cmd.ExecuteScalar();
+            return count > 0;
+        }
+
+        public bool MachineIsBooked(int machineId, DateTime bookingDate, int timeslotId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(@"
+                SELECT COUNT(*)
+                FROM Booking
+                WHERE MachineId = @machine
+                  AND BookingDate = @date
+                  AND TimeslotId = @slot
+                  AND IsCancelled = 0;", con);
+
+            cmd.Parameters.Add("@machine", SqlDbType.Int).Value = machineId;
+            cmd.Parameters.Add("@date", SqlDbType.Date).Value = bookingDate.Date;
+            cmd.Parameters.Add("@slot", SqlDbType.Int).Value = timeslotId;
+
+            con.Open();
+            var count = (int)cmd.ExecuteScalar();
+            return count > 0;
+        }
     }
 }

@@ -13,51 +13,26 @@ namespace Vask_En_Tid_Library.Services
     /// </summary>
     public class ApartmentService
     {
-        /// <summary>
-        /// The apartment repo
-        /// </summary>
         private readonly IApartmentRepo _apartmentRepo;
-        /// <summary>
-        /// The apartment
-        /// </summary>
-        private Apartment _apartment;
 
-        /// <summary>
-        /// Creates the apartment.
-        /// </summary>
-        /// <param name="apartmentId">The apartment identifier.</param>
-        public void CreateApartment(Apartment apartment)
+        public ApartmentService(IApartmentRepo apartmentRepo)
+        {
+            _apartmentRepo = apartmentRepo;
+        }
+
+        public List<Apartment> GetAll()
+        {
+            return _apartmentRepo.GetAll();
+        }
+
+        public Apartment GetById(int id)
+        {
+            return _apartmentRepo.GetById(id);
+        }
+
+        public void Create(Apartment apartment)
         {
             _apartmentRepo.CreateApartment(apartment);
-        }
-        /// <summary>
-        /// Deletes the apartment.
-        /// </summary>
-        /// <param name="apartmentId">The apartment identifier.</param>
-        public void DeleteApartment(int apartmentId)
-        {
-            _apartmentRepo.DeleteApartment(apartmentId);
-        }
-        /// <summary>
-        /// Updates the apartment.
-        /// </summary>
-        /// <param name="apartmentId">The apartment identifier.</param>
-        public void UpdateApartment(Apartment apartment)
-        {
-            _apartmentRepo.UpdateApartment(apartment);
-
-        }
-        /// <summary>
-        /// Gets all apartments.
-        /// </summary>
-        public void GetAll()
-        {
-            _apartmentRepo.GetAll();
-        }
-
-        public void GetById(int apartmentId)
-        {
-            _apartmentRepo.GetAll();
         }
     }
 }

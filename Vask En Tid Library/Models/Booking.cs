@@ -6,107 +6,59 @@ using System.Threading.Tasks;
 
 namespace Vask_En_Tid_Library.Models
 {
-    /// <summary>
-    /// 
-    /// </summary>
+    public enum TimeslotEnum
+    {
+        EightToTen = 1,
+        TenToTwelve = 2,
+        TwelveToTwo = 3,
+        TwoToFour = 4,
+        FourToSix = 5,
+        SixToEight = 6
+    }
+
+    // hvis du også vil have enum i koden til maskintyper (selvom DB bruger MachineId)
+    public enum MachineTypeEnum
+    {
+        Washer = 1,
+        Dryer = 2,
+        Roller = 3
+    }
+
     public class Booking
     {
-        /// <summary>
-        /// The booking identifier
-        /// </summary>
-        public int _bookingId;
-        /// <summary>
-        /// The booking time
-        /// </summary>
-        public TimeSpan _bookingTime;
-        /// <summary>
-        /// The tenant identifier
-        /// </summary>
-        public int _tenantId;
-        /// <summary>
-        /// The machine identifier
-        /// </summary>
-        public int _machineId;
-        /// <summary>
-        /// The booking date
-        /// </summary>
-        public DateTime _bookingDate;
-        /// <summary>
-        /// The is booked
-        /// </summary>
-        public bool _isBooked;
+        // PK i DB
+        public int BookingId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the booking identifier.
-        /// </summary>
-        /// <value>
-        /// The booking identifier.
-        /// </value>
-        public int BookingId { get { return _bookingId; } set { _bookingId = value; } }
-        /// <summary>
-        /// Gets or sets the booking time.
-        /// </summary>
-        /// <value>
-        /// The booking time.
-        /// </value>
-        public TimeSpan BookingTime { get { return _bookingTime; } set { _bookingTime = value; } }
+        // FK → Tenant
+        public int TenantId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the tenant identifier.
-        /// </summary>
-        /// <value>
-        /// The tenant identifier.
-        /// </value>
-        public int TenantId { get { return _tenantId; } set { _tenantId = value; } }
-        /// <summary>
-        /// Gets or sets the machine identifier.
-        /// </summary>
-        /// <value>
-        /// The machine identifier.
-        /// </value>
-        public int MachineId { get { return _machineId; } set { _machineId = value; } }
-        /// <summary>
-        /// Gets or sets the booking date.
-        /// </summary>
-        /// <value>
-        /// The booking date.
-        /// </value>
-        public DateTime BookingDate { get { return _bookingDate; } set { _bookingDate = value; } }
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is booked.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is booked; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsBooked { get { return _isBooked; } set { _isBooked = value; } }
+        // FK → Machine (den konkrete maskine, ikke bare “Washer”)
+        public int MachineId { get; set; }
 
-        public string MachineType { get; set; } = "Washer"; 
+        // datoen der bookes
+        public DateTime BookingDate { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Booking"/> class.
-        /// </summary>
-        /// <param name="bookingId">The booking identifier.</param>
-        /// <param name="bookingTime">The booking time.</param>
-        /// <param name="tenantId">The tenant identifier.</param>
-        /// <param name="machineId">The machine identifier.</param>
-        /// <param name="bookingDate">The booking date.</param>
-        /// <param name="isBooked">if set to <c>true</c> [is booked].</param>
-        public Booking(int bookingId, TimeSpan bookingTime, int tenantId, int machineId, DateTime bookingDate, bool isBooked)
+        // FK → Timeslot (den vi lavede i SQL)
+        public int TimeslotId { get; set; }
+
+        // om den er aflyst
+        public bool IsCancelled { get; set; }
+
+        // 👇 Hjælpeproperty: gør det nemmere i C#
+        // så du kan skrive booking.Timeslot == TimeslotEnum.EightToTen
+        public TimeslotEnum Timeslot
         {
-            _bookingId = bookingId;
-            _bookingTime = bookingTime;
-            _tenantId = tenantId;
-            _machineId = machineId;
-            _bookingDate = bookingDate;
-            _isBooked = isBooked;
+            get => (TimeslotEnum)TimeslotId;
+            set => TimeslotId = (int)value;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Booking"/> class.
-        /// </summary>
-        public Booking()
-        {
-        }
+        // valgfri: hvis du i UI vil vise typen (Washer/Dryer/Roller),
+        // men det er ikke noget vi gemmer på Booking-tabellen mere
+        public MachineTypeEnum? MachineType { get; set; }
 
+        public Booking() { }
     }
 }
+
+    
+

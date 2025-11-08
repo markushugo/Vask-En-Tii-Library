@@ -10,7 +10,11 @@ namespace Vask_En_Tid_Library.IRepos
 {
     public interface ITimeslotRepo
     {
-        public void ShowAvailableTimeslots(int id);
+
+        List<Timeslot> GetAll();
+
+
+
 
     }
 }

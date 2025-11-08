@@ -46,7 +46,7 @@ namespace Vask_En_Tid_Library.Models
         /// <value>
         /// The apartment adrees.
         /// </value>
-        public int ApartmentCode { get { return _apartmentCode; } set { _apartmentCode = value; } }
+        public string ApartmentCode { get; set; }
         /// <summary>
         /// Initializes a new instance of the <see cref="Apartment"/> class.
         /// </summary>

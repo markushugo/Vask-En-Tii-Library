@@ -52,11 +52,14 @@ namespace Vask_En_Tid_Library.Models
         /// <param name="firstName">The first name.</param>
         /// <param name="lastName">The last name.</param>
         /// <param name="tenantID">The tenant identifier.</param>
-        public Tenant(string firstName, string lastName, int tenantID)
+        /// 
+        public int ApartmentId { get; set; }
+        public Tenant(string firstName, string lastName, int tenantID, int apartmentId)
         {
             _firstName = firstName;
             _lastName = lastName;
             _tenantID = tenantID;
+            ApartmentId = apartmentId;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="Tenant"/> class.

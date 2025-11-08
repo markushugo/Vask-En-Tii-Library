@@ -11,23 +11,14 @@ namespace Vask_En_Tid_Library.Models
     /// </summary>
     public class Timeslot
     {
-        /// <summary>
-        /// The identifier
-        /// </summary>
-        public int _id;
-        public enum _timeslotEnum;
+        public int TimeslotId { get; set; }
+        public string SlotName { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
 
-        public int Id { get { return _id; } set { _id = value; } }
-        public enum TimeslotEnum { EightToTen = 1, TenToTwelve, TwelveToTwo, TwoToFour, FourToSix, SixToEight }
-
-        public Timeslot(int id)
+        public override string ToString()
         {
-            _id = id;
-
-        }
-
-        public Timeslot()
-        {
+            return $"{SlotName} ({StartTime:hh\\:mm}-{EndTime:hh\\:mm})";
         }
 
 

@@ -8,41 +8,20 @@ using Vask_En_Tid_Library.Models;
 
 namespace Vask_En_Tid_Library.IRepos
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IBookingRepo
-    {
+   
+       public interface IBookingRepo
+        {
+            // CRUD
+            void CreateBooking(Booking booking);
+            void DeleteBooking(int bookingId);
+            void UpdateBooking(Booking booking);
+            List<Booking> GetAll();
+            Booking GetById(int bookingId);
+            List<Booking> GetUpcoming();
 
-        /// <summary>
-        /// Creates the booking.
-        /// </summary>
-        /// <param name="bookingId">The booking identifier.</param>
-        public void CreateBooking(Booking booking);
-
-
-        /// <summary>
-        /// Deletes the booking.
-        /// </summary>
-        /// <param name="bookingId">The booking identifier.</param>
-        public void DeleteBooking(int bookingId);
-
-        /// <summary>
-        /// Updates the booking.
-        /// </summary>
-        /// <param name="bookingId">The booking identifier.</param>
-        public void UpdateBooking(Booking booking);
-
-        /// <summary>
-        /// Gets all bookings.
-        /// </summary>
-        public List<Booking> GetAll();
-
-        public Booking GetById(int bookingId);
-
-        public List<Booking> GetUpcoming();
-
-        public int CountBookings(DateTime bookingDate, TimeSpan bookingTime, string machineType);
-
+            // Regler/checks
+            bool TenantHasBooking(int tenantId, DateTime bookingDate, int timeslotId);
+            bool MachineIsBooked(int machineId, DateTime bookingDate, int timeslotId);
+        }
     }
-}
+
