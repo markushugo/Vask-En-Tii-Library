@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vask_En_Tid_Library.Models;
+﻿using Vask_En_Tid_Library.Models;
 
 namespace Vask_En_Tid_Library.IRepos
 {
@@ -15,25 +10,32 @@ namespace Vask_En_Tid_Library.IRepos
         /// <summary>
         /// Creates the apartment.
         /// </summary>
-        /// <param name="apartmentId">The apartment identifier.</param>
+        /// <param name="apartment">The apartment.</param>
         public void CreateApartment(Apartment apartment);
+
         /// <summary>
         /// Deletes the apartment.
         /// </summary>
         /// <param name="apartmentId">The apartment identifier.</param>
         public void DeleteApartment(int apartmentId);
+
         /// <summary>
         /// Updates the apartment.
         /// </summary>
-        /// <param name="apartmentId">The apartment identifier.</param>
+        /// <param name="apartment">The apartment.</param>
         public void UpdateApartment(Apartment apartment);
+
         /// <summary>
         /// Gets all apartments.
         /// </summary>
+        /// <returns></returns>
         public List<Apartment> GetAll();
 
+        /// <summary>
+        /// Gets the by identifier.
+        /// </summary>
+        /// <param name="apartmentId">The apartment identifier.</param>
+        /// <returns></returns>
         public Apartment GetById(int apartmentId);
-
-
     }
 }

@@ -1,24 +1,34 @@
 ﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vask_En_Tid_Library.IRepos;
 using Vask_En_Tid_Library.Models;
 
 namespace Vask_En_Tid_Library.Repos
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Vask_En_Tid_Library.IRepos.IUnitRepo" />
     public class UnitRepo : IUnitRepo
     {
+        /// <summary>
+        /// The connection string
+        /// </summary>
         private readonly string _connectionString;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnitRepo"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
         public UnitRepo(string connectionString)
         {
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Creates the unit.
+        /// </summary>
+        /// <param name="unit">The unit.</param>
         public void CreateUnit(Unit unit)
         {
             using var con = new SqlConnection(_connectionString);
@@ -33,6 +43,10 @@ namespace Vask_En_Tid_Library.Repos
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Deletes the unit.
+        /// </summary>
+        /// <param name="machineId">The machine identifier.</param>
         public void DeleteUnit(int machineId)
         {
             using var con = new SqlConnection(_connectionString);
@@ -43,6 +57,10 @@ namespace Vask_En_Tid_Library.Repos
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Updates the unit.
+        /// </summary>
+        /// <param name="unit">The unit.</param>
         public void UpdateUnit(Unit unit)
         {
             using var con = new SqlConnection(_connectionString);
@@ -58,6 +76,10 @@ namespace Vask_En_Tid_Library.Repos
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Gets all units.
+        /// </summary>
+        /// <returns></returns>
         public List<Unit> GetAllUnits()
         {
             var list = new List<Unit>();
@@ -80,6 +102,11 @@ namespace Vask_En_Tid_Library.Repos
             return list;
         }
 
+        /// <summary>
+        /// Gets the by identifier.
+        /// </summary>
+        /// <param name="machineId">The machine identifier.</param>
+        /// <returns></returns>
         public Unit GetById(int machineId)
         {
             Unit unit = null;

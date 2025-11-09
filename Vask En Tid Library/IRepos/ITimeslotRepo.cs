@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vask_En_Tid_Library.Models;
-
+﻿using Vask_En_Tid_Library.Models;
 
 namespace Vask_En_Tid_Library.IRepos
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ITimeslotRepo
     {
-
+        /// <summary>
+        /// Gets all.
+        /// </summary>
+        /// <returns></returns>
         List<Timeslot> GetAll();
-
-
-
-
     }
 }

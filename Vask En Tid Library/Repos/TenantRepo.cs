@@ -1,25 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Vask_En_Tid_Library.IRepos;
 using Vask_En_Tid_Library.Models;
 
-
-
 namespace Vask_En_Tid_Library.Repos
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Vask_En_Tid_Library.IRepos.ITenantRepo" />
     public class TenantRepo : ITenantRepo
     {
+        /// <summary>
+        /// The connection string
+        /// </summary>
         private readonly string _connectionString;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TenantRepo"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
         public TenantRepo(string connectionString)
         {
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Gets all.
+        /// </summary>
+        /// <returns></returns>
         public List<Tenant> GetAll()
         {
             var tenants = new List<Tenant>();
@@ -44,6 +52,11 @@ namespace Vask_En_Tid_Library.Repos
             return tenants;
         }
 
+        /// <summary>
+        /// Gets all tenants.
+        /// </summary>
+        /// <param name="tenantId">The tenant identifier.</param>
+        /// <returns></returns>
         public Tenant GetById(int tenantId)
         {
             Tenant tenant = null;
@@ -69,6 +82,10 @@ namespace Vask_En_Tid_Library.Repos
             return tenant;
         }
 
+        /// <summary>
+        /// Creates the tenant.
+        /// </summary>
+        /// <param name="tenant">The tenant.</param>
         public void CreateTenant(Tenant tenant)
         {
             using var connection = new SqlConnection(_connectionString);
@@ -84,6 +101,10 @@ namespace Vask_En_Tid_Library.Repos
             command.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Updates the tenant.
+        /// </summary>
+        /// <param name="tenant">The tenant.</param>
         public void UpdateTenant(Tenant tenant)
         {
             using var connection = new SqlConnection(_connectionString);
@@ -100,6 +121,10 @@ namespace Vask_En_Tid_Library.Repos
             command.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Deletes the tenant.
+        /// </summary>
+        /// <param name="tenantId">The tenant identifier.</param>
         public void DeleteTenant(int tenantId)
         {
             using var connection = new SqlConnection(_connectionString);
@@ -113,5 +138,3 @@ namespace Vask_En_Tid_Library.Repos
         }
     }
 }
-
-

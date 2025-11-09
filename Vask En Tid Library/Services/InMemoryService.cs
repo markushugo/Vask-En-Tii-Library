@@ -1,24 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vask_En_Tid_Library.Models;
+﻿using Vask_En_Tid_Library.Models;
 
 namespace Vask_En_Tid_Library.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class InMemoryService
     {
-     
-           
+        /// <summary>
+        /// Gets the tenants.
+        /// </summary>
+        /// <value>
+        /// The tenants.
+        /// </value>
         public static List<TenantRegistration> Tenants { get; } = new();
     }
 
-       
-        public class TenantRegistration
-        {
-            public Tenant Tenant { get; set; }
-            public Apartment Apartment { get; set; }
-        }
+    /// <summary>
+    /// 
+    /// </summary>
+    public class TenantRegistration
+    {
+        /// <summary>
+        /// Gets or sets the tenant.
+        /// </summary>
+        /// <value>
+        /// The tenant.
+        /// </value>
+        public Tenant Tenant { get; set; }
+        /// <summary>
+        /// Gets or sets the apartment.
+        /// </summary>
+        /// <value>
+        /// The apartment.
+        /// </value>
+        public Apartment Apartment { get; set; }
     }
-
+}
