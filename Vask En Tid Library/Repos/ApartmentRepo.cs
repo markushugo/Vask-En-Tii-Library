@@ -35,8 +35,8 @@ namespace Vask_En_Tid_Library.Repos
                 "INSERT INTO Apartment (FloorNumber, ApartmentCode) VALUES (@FloorNumber, @ApartmentCode)",
                 connection);
 
-            // hvis du ikke bruger FloorNumber kan du bare sætte 0
-            command.Parameters.AddWithValue("@FloorNumber", apartment.Number); // eller apartment.FloorNumber hvis du har det
+       
+            command.Parameters.AddWithValue("@FloorNumber", apartment.Number); 
             command.Parameters.AddWithValue("@ApartmentCode", apartment.ApartmentCode);
 
             connection.Open();

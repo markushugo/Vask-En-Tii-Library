@@ -51,7 +51,7 @@ namespace Vask_En_Tid_Library.Repos
         /// <param name="bookingId">The booking identifier.</param>
         public void DeleteBooking(int bookingId)
         {
-            // du kan også vælge at sætte IsCancelled = 1 i stedet
+           
             using var con = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(
                 "DELETE FROM Booking WHERE BookingId = @id;",
@@ -147,7 +147,7 @@ namespace Vask_En_Tid_Library.Repos
                     Apartment = new Apartment
                     {
                         ApartmentId = reader.GetInt32(reader.GetOrdinal("ApartmentId")),
-                        // din kolonne hedder FloorNumber i databasen
+                      
                         Number = reader.GetInt32(reader.GetOrdinal("FloorNumber")),
                         ApartmentCode = reader.GetString(reader.GetOrdinal("ApartmentCode"))
                     },
@@ -156,7 +156,7 @@ namespace Vask_En_Tid_Library.Repos
                         TimeslotId = reader.GetInt32(reader.GetOrdinal("TimeslotId")),
                         SlotName = reader.GetString(reader.GetOrdinal("SlotName"))
                     }
-                    // Machine = ... hvis du joiner til Unit/Machine
+                   
                 };
 
                 list.Add(booking);

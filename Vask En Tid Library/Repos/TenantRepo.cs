@@ -45,7 +45,7 @@ namespace Vask_En_Tid_Library.Repos
                     TenantID = (int)reader["TenantId"],
                     FirstName = (string)reader["FirstName"],
                     LastName = (string)reader["LastName"],
-                    ApartmentId = (int)reader["ApartmentId"]   // <- tilføj feltet i din model
+                    ApartmentId = (int)reader["ApartmentId"]   
                 });
             }
 
